@@ -10,9 +10,10 @@ import logging
 def parse_args():
     parser = argparse.ArgumentParser()
 
-    parser.add_argument("--version",
-        action="version",
-        version="%(prog)s " + __version__)
+    parser.add_argument(
+        "--version", action="version", version=f"%(prog)s {__version__}"
+    )
+
 
     parser.add_argument("url",
         help="The URL of the resource you want to download.")
@@ -76,8 +77,7 @@ def parse_args():
         action="store_true",
         help="Print a progress bar. Mutes the default logging. Requires `tqdm` to be installed.")
 
-    args = parser.parse_args()
-    return args
+    return parser.parse_args()
 
 def main():
     args = parse_args()

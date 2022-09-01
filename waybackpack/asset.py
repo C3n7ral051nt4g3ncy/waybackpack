@@ -48,29 +48,23 @@ class Asset(object):
             return None
 
         content = res.content
-        if raw:
-            return content
-
-        else:
+        if not raw:
             rdp = REDIRECT_PATTERNS
 
             is_js_redirect = sum(re.search(pat, content) != None
                 for pat in rdp) == len(rdp)
 
             if is_js_redirect:
-                code = re.search(rdp[0], content).group(1).decode("utf-8")
-                loc = DEFAULT_ROOT + re.search(rdp[2], content).group(1).decode("utf-8")
+                code = re.search(rdp[0], content)[1].decode("utf-8")
+                loc = DEFAULT_ROOT + re.search(rdp[2], content)[1].decode("utf-8")
                 log_msg = "Encountered {0} redirect to {1}."
                 logger.info(log_msg.format(code, loc))
                 if session.follow_redirects:
                     content = session.get(loc).content
-                else:
-                    pass
-
             if re.search(REMOVAL_PATTERNS[0], content) != None:
                 for pat in REMOVAL_PATTERNS:
                     content = re.sub(pat, b"", content)
                 if root != "":
                     root_pat = re.compile(('([\'"])(/web/' + self.timestamp + ')').encode("utf-8"))
                     content = re.sub(root_pat, (r"\1" + root + r"\2").encode("utf-8"), content)
-            return content
+        return content
